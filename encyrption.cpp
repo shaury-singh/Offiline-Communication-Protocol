@@ -91,8 +91,13 @@ vector<vector<string>> substitutionBytes(vector<vector<string>> hexVector){
     {"F0", "8C"}, {"F1", "A1"}, {"F2", "89"}, {"F3", "0D"}, {"F4", "BF"}, {"F5", "E6"}, {"F6", "42"}, {"F7", "68"},
     {"F8", "41"}, {"F9", "99"}, {"FA", "2D"}, {"FB", "0F"}, {"FC", "B0"}, {"FD", "54"}, {"FE", "BB"}, {"FF", "16"}
     };
-    return {};
-
+    vector<vector<string>> substitutionMatrix(4,vector<string>(4,""));
+    for (int i=0; i<hexVector.size(); i++){
+        for (int j=0; j<hexVector[i].size(); j++){
+            substitutionMatrix[i][j] = sbox[hexVector[i][j]];
+        }
+    }
+    return substitutionMatrix;
 }
 
 int main(){
@@ -104,9 +109,10 @@ int main(){
     vector<vector<int>> hexToIntText = hex_to_int(textMapping);
     vector<vector<int>> xorMatrix = xorCyprt(hexToIntText,hexToIntKey);
     vector<vector<string>> hexVector = int_to_hex(xorMatrix);
-    for (int i=0; i<hexVector.size(); i++){
-        for (int j=0; j<hexVector[i].size(); j++){
-            cout << hexVector[i][j] << " ";
+    vector<vector<string>> substitutionMatrix = substitutionBytes(hexVector);
+    for (int i=0; i<substitutionMatrix.size(); i++){
+        for (int j=0; j<substitutionMatrix[i].size(); j++){
+            cout << substitutionMatrix[i][j] << " ";
         }
         cout << endl;
     }
