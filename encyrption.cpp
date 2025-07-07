@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include<algorithm>
 #include <unordered_map>
 #include <sstream>
 #include <iomanip>
@@ -100,9 +101,34 @@ vector<vector<string>> substitutionBytes(vector<vector<string>> hexVector){
     return substitutionMatrix;
 }
 
+// void shifRows(vector<string>& row, int offset){
+//     reverse(row.begin(), row.end());
+//     reverse(row.begin(), row.begin() + offset);
+//     reverse(row.begin() + offset, row.end());
+// }
+
+void shifRows(vector<string>& row, int offset){
+    rotate(row.begin(), row.begin() + offset, row.end());
+}
+
+vector<vector<string>> shiftRowMatrix(vector<vector<string>>& substitutionMatrix){
+    for (int i=0; i<substitutionMatrix.size(); i++){
+        shifRows(substitutionMatrix[i],i);
+    }
+    return substitutionMatrix;
+}
+
+vector<vector<string>> mixColoums(vector<vector<int>>& fixedMatrix, vector<vector<string>>& substitutionMatrix){
+    vector<vector<int>> intMatrix = hex_to_int(substitutionMatrix);
+    vector<vector<int>> intXOR = xorCyprt(fixedMatrix,intMatrix);
+    vector<vector<string>> hexMatrix = int_to_hex(intXOR);
+    return hexMatrix;
+}
+
 int main(){
     string key = "Thats my Kung Fu";
     string plaintext = "Two One Nine Two";
+    vector<vector<int>> fixedMatrix = {{2,3,1,1},{1,2,3,1},{1,1,2,3},{3,1,1,2}};
     vector<vector<string>> keyMapping = string_to_hex(key);
     vector<vector<string>> textMapping = string_to_hex(plaintext);
     vector<vector<int>> hexToIntKey = hex_to_int(keyMapping);
@@ -110,9 +136,11 @@ int main(){
     vector<vector<int>> xorMatrix = xorCyprt(hexToIntText,hexToIntKey);
     vector<vector<string>> hexVector = int_to_hex(xorMatrix);
     vector<vector<string>> substitutionMatrix = substitutionBytes(hexVector);
-    for (int i=0; i<substitutionMatrix.size(); i++){
-        for (int j=0; j<substitutionMatrix[i].size(); j++){
-            cout << substitutionMatrix[i][j] << " ";
+    vector<vector<string>> shiftedMatrix = shiftRowMatrix(substitutionMatrix);
+    vector<vector<string>> mixColoumMatrix = mixColoums(fixedMatrix,substitutionMatrix);
+    for (int i=0; i<mixColoumMatrix.size(); i++){
+        for (int j=0; j<mixColoumMatrix[i].size(); j++){
+            cout << mixColoumMatrix[i][j] << " ";
         }
         cout << endl;
     }
