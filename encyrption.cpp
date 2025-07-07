@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <sstream>
 #include <iomanip>
+#include <chrono>
 
 using namespace std;
 
@@ -126,6 +127,7 @@ vector<vector<string>> mixColoums(vector<vector<int>>& fixedMatrix, vector<vecto
 }
 
 int main(){
+    auto start = std::chrono::high_resolution_clock::now();
     string key = "Thats my Kung Fu";
     string plaintext = "Two One Nine Two";
     vector<vector<int>> fixedMatrix = {{2,3,1,1},{1,2,3,1},{1,1,2,3},{3,1,1,2}};
@@ -138,6 +140,11 @@ int main(){
     vector<vector<string>> substitutionMatrix = substitutionBytes(hexVector);
     vector<vector<string>> shiftedMatrix = shiftRowMatrix(substitutionMatrix);
     vector<vector<string>> mixColoumMatrix = mixColoums(fixedMatrix,substitutionMatrix);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto durationMicro = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    cout << "Execution time: " << durationMicro.count() << " microseconds" << endl;
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    cout << "Execution time: " << duration.count() << " milliseconds" << endl;
     for (int i=0; i<mixColoumMatrix.size(); i++){
         for (int j=0; j<mixColoumMatrix[i].size(); j++){
             cout << mixColoumMatrix[i][j] << " ";
