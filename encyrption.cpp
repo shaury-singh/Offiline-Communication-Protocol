@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include<algorithm>
+#include <algorithm>
 #include <unordered_map>
 #include <sstream>
 #include <iomanip>
