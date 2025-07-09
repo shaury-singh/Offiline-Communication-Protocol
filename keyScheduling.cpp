@@ -73,6 +73,17 @@ vector<vector<string>> shiftRowMatrix(vector<vector<string>>& substitutionMatrix
     return substitutionMatrix;
 }
 
+vector<vector<string>> roundKeys(vector<vector<string>>& hexMatrix){
+    unordered_map<int, vector<int>> rCon = {{1, {0x01, 0x00, 0x00, 0x00}},{2, {0x02, 0x00, 0x00, 0x00}},{3, {0x04, 0x00, 0x00, 0x00}},{4, {0x08, 0x00, 0x00, 0x00}},{5, {0x10, 0x00, 0x00, 0x00}},{6, {0x20, 0x00, 0x00, 0x00}},{7, {0x40, 0x00, 0x00, 0x00}},{8, {0x80, 0x00, 0x00, 0x00}},{9, {0x1B, 0x00, 0x00, 0x00}},{10, {0x36, 0x00, 0x00, 0x00}}};
+    vector<vector<string>> roundKeys = {}; 
+    for (int i=0; i<hexMatrix.size(); i++){
+        roundKeys.push_back(hexMatrix[i]);
+    }
+    for (int i=4; i<44; i++){
+        vector<string> push_vector = {};
+    }
+}
+
 int main(){
     string key = "Thats my Kung Fu";
     vector<vector<string>> hexMatrix = string_to_hex(key);
