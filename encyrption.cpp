@@ -102,12 +102,6 @@ vector<vector<string>> substitutionBytes(vector<vector<string>> hexVector){
     return substitutionMatrix;
 }
 
-// void shifRows(vector<string>& row, int offset){
-//     reverse(row.begin(), row.end());
-//     reverse(row.begin(), row.begin() + offset);
-//     reverse(row.begin() + offset, row.end());
-// }
-
 void shifRows(vector<string>& row, int offset){
     rotate(row.begin(), row.begin() + offset, row.end());
 }
