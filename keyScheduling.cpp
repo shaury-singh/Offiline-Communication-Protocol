@@ -4,11 +4,11 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include <scheduling.h>
+#include "scheduling.h"
 
 using namespace std;
 
-vector<vector<string>> string_to_hex(const string& key) {
+vector<vector<string>> string_to_hex_(const string& key) {
     unordered_map<char, string> map = {
         {' ', "20"}, {'A', "41"}, {'B', "42"}, {'C', "43"}, {'D', "44"}, {'E', "45"},
         {'F', "46"}, {'G', "47"}, {'H', "48"}, {'I', "49"}, {'J', "4A"}, {'K', "4B"},
@@ -77,7 +77,7 @@ unordered_map<string, string> get_sbox() {
     return sbox;
 }
 
-vector<string> xorWords(vector<string> a, vector<string> b) {
+vector<string> xorWords_(vector<string> a, vector<string> b) {
     vector<string> result(4);
     for (int i = 0; i < 4; i++) {
         int val = stoi(a[i], nullptr, 16) ^ stoi(b[i], nullptr, 16);
@@ -88,12 +88,12 @@ vector<string> xorWords(vector<string> a, vector<string> b) {
     return result;
 }
 
-vector<string> rotWord(vector<string> word) {
+vector<string> rotWord_(vector<string> word) {
     rotate(word.begin(), word.begin() + 1, word.end());
     return word;
 }
 
-vector<string> subWord(vector<string> word, unordered_map<string, string>& sbox) {
+vector<string> subWord_(vector<string> word, unordered_map<string, string>& sbox) {
     vector<string> result(4);
     for (int i = 0; i < 4; i++) {
         result[i] = sbox[word[i]];
@@ -101,7 +101,7 @@ vector<string> subWord(vector<string> word, unordered_map<string, string>& sbox)
     return result;
 }
 
-vector<vector<string>> generateRoundKeys(vector<vector<string>>& hexMatrix, unordered_map<string, string>& sbox) {
+vector<vector<string>> generateRoundKeys_(vector<vector<string>>& hexMatrix, unordered_map<string, string>& sbox) {
     unordered_map<int, vector<int>> rCon = {
         {1, {0x01, 0x00, 0x00, 0x00}}, {2, {0x02, 0x00, 0x00, 0x00}}, {3, {0x04, 0x00, 0x00, 0x00}},
         {4, {0x08, 0x00, 0x00, 0x00}}, {5, {0x10, 0x00, 0x00, 0x00}}, {6, {0x20, 0x00, 0x00, 0x00}},
@@ -122,17 +122,17 @@ vector<vector<string>> generateRoundKeys(vector<vector<string>>& hexMatrix, unor
     for (int i = 4; i < 44; i++) {
         vector<string> temp = w[i - 1];
         if (i % 4 == 0) {
-            temp = rotWord(temp);
-            temp = subWord(temp, sbox);
+            temp = rotWord_(temp);
+            temp = subWord_(temp, sbox);
             vector<string> rconWord(4);
             for (int j = 0; j < 4; j++) {
                 stringstream ss;
                 ss << hex << uppercase << setfill('0') << setw(2) << rCon[i / 4][j];
                 rconWord[j] = ss.str();
             }
-            temp = xorWords(temp, rconWord);
+            temp = xorWords_(temp, rconWord);
         }
-        w.push_back(xorWords(w[i - 4], temp));
+        w.push_back(xorWords_(w[i - 4], temp));
     }
 
     return w;
@@ -151,11 +151,12 @@ void printRoundKeys(const vector<vector<string>>& w) {
     }
 }
 
-int main() {
-    string key = "Thats my Kung Fu";
-    auto hexMatrix = string_to_hex(key);
-    auto sbox = get_sbox();
-    auto roundKeys = generateRoundKeys(hexMatrix, sbox);
-    printRoundKeys(roundKeys);
-    return 0;
-}
+// int main() {
+//     string key = "Thats my Kung Fu";
+//     auto hexMatrix = string_to_hex_(key);
+//     auto sbox = get_sbox();
+//     auto roundKeys = generateRoundKeys_(hexMatrix, sbox);
+//     cout << roundKeys.size() << endl;
+//     printRoundKeys(roundKeys);
+//     return 0;
+// }
