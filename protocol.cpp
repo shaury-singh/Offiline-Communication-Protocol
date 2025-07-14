@@ -78,7 +78,7 @@ class Sender{
             this -> sendSYNACK = true;
             return SYN + 2;
         }
-        vector<vector<string>> sendData(string IEC, string data){
+        vector<vector<string>> sendData(string IEC,string data){
             this -> hexMatrix = string_to_hex_(IEC);
             this -> textMapping = string_to_hex_(data);
             unordered_map<string,string> sBox = get_sbox();
@@ -90,7 +90,9 @@ class Sender{
 
 class Reciever{
     private:
+
     public:
+        
 };
 
 int main(){
@@ -99,6 +101,12 @@ int main(){
     sender.sendSYN();
     sender.recieveACK(ISN);
     sender.sendSYN_ACK();
-    
+    vector<vector<string>> data = sender.sendData("Thats my Kung Fu","Two One Nine Two");
+    for (int i=0; i<data.size(); i++){
+        for (int j=0; j<data[i].size(); j++){
+            cout << data[i][j] << " ";
+        }
+        cout << endl;
+    }
     return 0;
 }

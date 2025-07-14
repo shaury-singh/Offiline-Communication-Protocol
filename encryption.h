@@ -1,11 +1,11 @@
-#ifndef encryption.h
-#define encryption.h
-
-using namespace std;
+#ifndef encryption_h
+#define encryption_h
 
 #include <vector>
 #include <string>
 #include <unordered_map>
+
+using namespace std;
 
 vector<vector<string>> string_to_hex(string s);
 vector<vector<int>> hex_to_int(vector<vector<string>>& matrixMapping);

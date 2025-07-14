@@ -1,5 +1,5 @@
-#ifndef sessionkey.h
-#define sessionkey.h
+#ifndef sessionkey_h
+#define sessionkey_h
 
 #include <vector>
 #include <string>
