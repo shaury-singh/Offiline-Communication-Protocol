@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <chrono>
 #include "scheduling.h"
+#include "encryption.h"
 
 using namespace std;
 
@@ -121,7 +122,7 @@ vector<vector<string>> mixColoums(vector<vector<int>>& fixedMatrix, vector<vecto
     return hexMatrix;
 }
 
-vector<vector<string>> encryptMessage(vector<vector<int>>& fixedMatrix ,vector<vector<string>>& roundKeys, vector<vector<string>>& text, int index){
+vector<vector<string>> encryptMessage_(vector<vector<int>>& fixedMatrix ,vector<vector<string>>& roundKeys, vector<vector<string>>& text, int index){
     if (index == 40){
         return text;
     }
@@ -136,46 +137,46 @@ vector<vector<string>> encryptMessage(vector<vector<int>>& fixedMatrix ,vector<v
     vector<vector<string>> substitutionMatrix = substitutionBytes(hexVector);
     vector<vector<string>> shiftedMatrix = shiftRowMatrix(substitutionMatrix);
     vector<vector<string>> mixColoumMatrix = mixColoums(fixedMatrix,shiftedMatrix);
-    return encryptMessage(fixedMatrix,roundKeys,mixColoumMatrix,index+4);
+    return encryptMessage_(fixedMatrix,roundKeys,mixColoumMatrix,index+4);
 }
 
-int main(){
-    auto start = std::chrono::high_resolution_clock::now();
-    string key = "Thats my Kung Fu";
-    string plaintext = "One Two Nine One";
-    vector<vector<int>> fixedMatrix = {{2,3,1,1},{1,2,3,1},{1,1,2,3},{3,1,1,2}};
-    vector<vector<string>> keyMapping = string_to_hex(key);
-    unordered_map<string,string> sbox = get_sbox();
-    vector<vector<string>> roundKeys = generateRoundKeys_(keyMapping,sbox);
-    for (int i=0; i<plaintext.length(); i+=16){
-        cout << "text is: " << plaintext.substr(i,i+16) << endl;
-        vector<vector<string>> textMapping = string_to_hex(plaintext.substr(i,i+16));
-        vector<vector<string>> encrypt = encryptMessage(fixedMatrix,roundKeys,textMapping,0);
-        for (int i=0; i<encrypt.size(); i++){
-            for (int j=0; j<encrypt[i].size(); j++){
-                cout << encrypt[i][j] << " ";
-            }
-            cout << endl;
-        }
-        cout << endl << endl;
-    }
-    auto end = std::chrono::high_resolution_clock::now();
-    auto durationMicro = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    cout << "Execution time: " << durationMicro.count() << " microseconds" << endl;
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    cout << "Execution time: " << duration.count() << " milliseconds" << endl;
-    // vector<vector<int>> hexToIntKey = hex_to_int(keyMapping);
-    // vector<vector<int>> hexToIntText = hex_to_int(textMapping);
-    // vector<vector<int>> xorMatrix = xorCyprt(hexToIntText,hexToIntKey);
-    // vector<vector<string>> hexVector = int_to_hex(xorMatrix);
-    // vector<vector<string>> substitutionMatrix = substitutionBytes(hexVector);
-    // vector<vector<string>> shiftedMatrix = shiftRowMatrix(substitutionMatrix);
-    // vector<vector<string>> mixColoumMatrix = mixColoums(fixedMatrix,substitutionMatrix);
-    // for (int i=0; i<mixColoumMatrix.size(); i++){
-    //     for (int j=0; j<mixColoumMatrix[i].size(); j++){
-    //         cout << mixColoumMatrix[i][j] << " ";
-    //     }
-    //     cout << endl;
-    // }
-    return 0;
-}
+// int main(){
+//     auto start = std::chrono::high_resolution_clock::now();
+//     string key = "Thats my Kung Fu";
+//     string plaintext = "One Two Nine One";
+//     vector<vector<int>> fixedMatrix = {{2,3,1,1},{1,2,3,1},{1,1,2,3},{3,1,1,2}};
+//     vector<vector<string>> keyMapping = string_to_hex(key);
+//     unordered_map<string,string> sbox = get_sbox();
+//     vector<vector<string>> roundKeys = generateRoundKeys_(keyMapping,sbox);
+//     for (int i=0; i<plaintext.length(); i+=16){
+//         cout << "text is: " << plaintext.substr(i,i+16) << endl;
+//         vector<vector<string>> textMapping = string_to_hex(plaintext.substr(i,i+16));
+//         vector<vector<string>> encrypt = encryptMessage(fixedMatrix,roundKeys,textMapping,0);
+//         for (int i=0; i<encrypt.size(); i++){
+//             for (int j=0; j<encrypt[i].size(); j++){
+//                 cout << encrypt[i][j] << " ";
+//             }
+//             cout << endl;
+//         }
+//         cout << endl << endl;
+//     }
+//     auto end = std::chrono::high_resolution_clock::now();
+//     auto durationMicro = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+//     cout << "Execution time: " << durationMicro.count() << " microseconds" << endl;
+//     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+//     cout << "Execution time: " << duration.count() << " milliseconds" << endl;
+//     // vector<vector<int>> hexToIntKey = hex_to_int(keyMapping);
+//     // vector<vector<int>> hexToIntText = hex_to_int(textMapping);
+//     // vector<vector<int>> xorMatrix = xorCyprt(hexToIntText,hexToIntKey);
+//     // vector<vector<string>> hexVector = int_to_hex(xorMatrix);
+//     // vector<vector<string>> substitutionMatrix = substitutionBytes(hexVector);
+//     // vector<vector<string>> shiftedMatrix = shiftRowMatrix(substitutionMatrix);
+//     // vector<vector<string>> mixColoumMatrix = mixColoums(fixedMatrix,substitutionMatrix);
+//     // for (int i=0; i<mixColoumMatrix.size(); i++){
+//     //     for (int j=0; j<mixColoumMatrix[i].size(); j++){
+//     //         cout << mixColoumMatrix[i][j] << " ";
+//     //     }
+//     //     cout << endl;
+//     // }
+//     return 0;
+// }
