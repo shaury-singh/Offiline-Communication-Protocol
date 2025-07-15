@@ -78,8 +78,8 @@ class Sender{
             this -> sendSYNACK = true;
             return SYN + 2;
         }
-        vector<vector<string>> sendData(string IEC,string data){
-            this -> hexMatrix = string_to_hex_(IEC);
+        vector<vector<string>> sendData(string data){
+            this -> hexMatrix = string_to_hex_(this -> payloadData.IEC);
             this -> textMapping = string_to_hex_(data);
             unordered_map<string,string> sBox = get_sbox();
             this -> roundKeys = generateRoundKeys_(hexMatrix,sBox);
@@ -90,7 +90,23 @@ class Sender{
 
 class Reciever{
     private:
-
+        struct senderInfo{
+            string encryptionCode;
+            string walletId;
+            string userId;
+            string stateCode;  
+        };
+        struct header{
+            long long ISN;
+            string location;
+            string deviceID;
+        };
+        struct payload{
+            string walletID;
+            string userID;
+            string stateCode;
+            string IEC;
+        };
     public:
         
 };
@@ -101,7 +117,7 @@ int main(){
     sender.sendSYN();
     sender.recieveACK(ISN);
     sender.sendSYN_ACK();
-    vector<vector<string>> data = sender.sendData("Thats my Kung Fu","Two One Nine Two");
+    vector<vector<string>> data = sender.sendData("Thats my Kung Fu");
     for (int i=0; i<data.size(); i++){
         for (int j=0; j<data[i].size(); j++){
             cout << data[i][j] << " ";
