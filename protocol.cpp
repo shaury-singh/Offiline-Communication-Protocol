@@ -61,10 +61,11 @@ class Sender{
             this -> rInfo.stateCode = stateCode;
         }
         int sendSYN(){
-            int ISN = generateISN();
-            this -> SYN = ISN;
+            int SYN = generateISN();
+            this -> SYN = SYN;
             SYNSent = true;
-            return ISN;
+            cout << "SYN Sent to WalletID: " << this -> rInfo.walletId << " SYN : " << this -> SYN << endl;
+            return SYN;
         }
         bool recieveACK(int ACK){
             if (ACK == SYN + 1){
@@ -107,14 +108,22 @@ class Reciever{
             string stateCode;
             string IEC;
         };
+        header head;
+        payload payload;
+        senderInfo sInfo;
+        bool SYNrecieved;
+        bool ACKsent;
+        bool SYNACKrevieved;
+        int ACK;
     public:
-        
+
 };
 
 int main(){
     int ISN = generateISN();
     Sender sender(ISN,"12345","12345","New Delhi","12345","Hello","Thats my Kung Fu");
-    sender.sendSYN();
+    sender.setRecieverInfo("misunderstanding","23456","23456","Shaury");
+    int SYN = sender.sendSYN();
     sender.recieveACK(ISN);
     sender.sendSYN_ACK();
     vector<vector<string>> data = sender.sendData("Thats my Kung Fu");
