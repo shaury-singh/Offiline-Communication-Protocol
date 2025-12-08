@@ -32,13 +32,20 @@ class Sender{
             string stateCode;
             string IEC;
         };
+        struct SYNPacket{
+            int SYN;
+            string EncryptionCode;
+        };
         header head;
         payload payloadData;
         recieverInfo rInfo;
+        SYNPacket SYNPckt;
         bool SYNSent;
         bool recieveACKMsg;
         bool sendSYNACK;
-        int SYN;
+        // int SYN;
+        int ACK;
+        int SYNACK;
         vector<vector<string>> hexMatrix;
         vector<vector<string>> textMapping;
         vector<vector<string>> roundKeys;
@@ -60,15 +67,17 @@ class Sender{
             this -> rInfo.userId = userId;
             this -> rInfo.stateCode = stateCode;
         }
-        int sendSYN(){
+        SYNPacket sendSYN(){
             int SYN = generateISN();
-            this -> SYN = SYN;
+            this -> SYNPckt.SYN = SYN;
+            this -> SYNPckt.EncryptionCode = this -> payloadData.IEC;
             SYNSent = true;
-            cout << "SYN Sent to WalletID: " << this -> rInfo.walletId << " SYN : " << this -> SYN << endl;
-            return SYN;
+            cout << "SYN Sent to WalletID: " << this -> rInfo.walletId << " SYN : " << this -> SYNPckt.SYN << endl;
+            return SYNPckt;
         }
         bool recieveACK(int ACK){
-            if (ACK == SYN + 1){
+            if (SYNSent && ACK == this -> SYNPckt.SYN + 1){
+                this -> ACK = ACK;
                 recieveACKMsg = true;
                 return true;
             }
@@ -76,8 +85,9 @@ class Sender{
             return false;
         }
         int sendSYN_ACK(){
+            this -> SYNACK = this -> SYNPckt.SYN + 2;
             this -> sendSYNACK = true;
-            return SYN + 2;
+            return this -> SYNACK;
         }
         vector<vector<string>> sendData(string data){
             this -> hexMatrix = string_to_hex_(this -> payloadData.IEC);
@@ -114,16 +124,46 @@ class Reciever{
         bool SYNrecieved;
         bool ACKsent;
         bool SYNACKrevieved;
+        int SYN;
         int ACK;
+        int SYNACK;
     public:
-
+        Reciever(long long ISN, string walletID, string userID, string location, string deviceID, string stateCode, string IEC){
+            this -> head.ISN = ISN;
+            this -> head.location = location;
+            this -> head.deviceID = deviceID;
+            this -> payload.walletID = walletID;
+            this -> payload.userID = userID;
+            this -> payload.IEC = IEC;
+            this -> payload.stateCode = stateCode;
+        }
+        void setSenderInfo(string encryptionCode, string walletId, string userId, string stateCode){
+            this -> sInfo.encryptionCode = encryptionCode;
+            this -> sInfo.walletId = walletId;
+            this -> sInfo.userId = userId;
+        };
+        int receiveSYNAndSendACK(int SYN){
+            this -> SYN = SYN;
+            this -> SYNrecieved = true;
+            this -> ACK = SYN+1;
+            return this->ACK;
+        }
+        bool receiveSYNACK(int SYNACK){
+            if (SYNACK == this -> SYN+2){
+                SYNACKrevieved = true;
+                this -> SYNACK = SYNACK;
+                return true;
+            }
+            SYNACKrevieved = false;
+            return false;
+        }
 };
 
 int main(){
     int ISN = generateISN();
     Sender sender(ISN,"12345","12345","New Delhi","12345","Hello","Thats my Kung Fu");
     sender.setRecieverInfo("misunderstanding","23456","23456","Shaury");
-    int SYN = sender.sendSYN();
+    sender.sendSYN();
     sender.recieveACK(ISN);
     sender.sendSYN_ACK();
     vector<vector<string>> data = sender.sendData("Thats my Kung Fu");
