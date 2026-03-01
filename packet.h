@@ -1,8 +1,6 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-using namespace std;
-
 #include <string>
 
 struct Header{
@@ -18,7 +16,7 @@ struct Header{
 
 struct Payload{
     int data;
-    string rachetKey;
+    std::string rachetKey;
 };
 
 struct Tail{
