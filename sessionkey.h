@@ -6,6 +6,6 @@
 
 using namespace std;
 
-string generateSessionKey();
+string generateRandomKey();
 
 #endif sessionkey.h

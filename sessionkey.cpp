@@ -6,7 +6,7 @@
 
 using namespace std;
 
-string generateSessionKey(){
+string generateRandomKey(){
     string charSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMOPQRSTUVWXYZ";
     string result = "";
     srand(time(0));
@@ -15,9 +15,4 @@ string generateSessionKey(){
         result += charSet[random];
     }
     return result;
-}
-
-int main(){
-    cout << generateSessionKey();
-    return 0;
 }
