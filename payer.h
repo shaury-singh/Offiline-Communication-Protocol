@@ -7,8 +7,10 @@ class Payer {
 private:
     int secretKey;
     int SenderID;
-    int mySeq;
-    int peerSeq;
+    int seqNum;
+    int ackNum;
+    bool SYN;
+    bool ACK;
 public:
     Payer(int id, int key){
         SenderID = id;
