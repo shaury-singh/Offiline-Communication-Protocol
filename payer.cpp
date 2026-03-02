@@ -57,3 +57,11 @@ bool Payer::setSYN_ACK(int seqNum, int ackNum, int payloadSize) {
         return false;
     }
 }
+
+std::vector<int> Payer::getNum(){
+    return {this -> seqNum, this -> ackNum};
+}
+
+std::vector<bool> Payer::getFlags(){
+    return {this -> SYN, this -> ACK};
+}

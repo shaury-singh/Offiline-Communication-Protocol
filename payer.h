@@ -19,6 +19,8 @@ public:
     bool setSYN(int seqNum);
     int returnACK();
     bool setSYN_ACK(int seqNum, int ackNum, int payloadSize);
+    std::vector<bool> getFlags();
+    std::vector<int> getNum();
 };
 
 #endif

@@ -1,4 +1,4 @@
-#include "Merchant.h"
+#include "merchant.h"
 #include "generatingFunctions.h"
 
 Merchant::Merchant(int id) {
@@ -55,4 +55,12 @@ bool Merchant::setSYN_ACK(int seqNum, int ackNum, int payloadSize) {
     } else {
         return false;
     }
+}
+
+std::vector<int> Merchant::getNum(){
+    return {this -> seqNum, this -> ackNum};
+}
+
+std::vector<bool> Merchant::getFlags(){
+    return {this -> SYN, this -> ACK};
 }
