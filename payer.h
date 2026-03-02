@@ -12,10 +12,13 @@ private:
     bool SYN;
     bool ACK;
 public:
-    Payer(int id, int key){
-        SenderID = id;
-        secretKey = key;
-    };
+    Payer(int id, int key);
+    int generateSYN();
+    bool setACK(int seqNum, int ackNum);
+    std::vector<int> returnSYN_ACK();
+    bool setSYN(int seqNum);
+    int returnACK();
+    bool setSYN_ACK(int seqNum, int ackNum, int payloadSize);
 };
 
 #endif
