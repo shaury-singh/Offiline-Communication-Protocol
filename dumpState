@@ -1,0 +1,10 @@
+// void handshakeInitPayer(Merchant &merchant, Payer &payer){
+//     Header handshakePkt = payer.sendSYN();
+//     logPacket("Payer", handshakePkt);
+//     handshakePkt = merchant.receiveSYNAndSendACK(handshakePkt.seqNum); 
+//     logPacket("Merchant", handshakePkt);
+//     handshakePkt = payer.receiveACKAndSendSYN_ACK(handshakePkt.seqNum,handshakePkt.ackNum);
+//     logPacket("Payer", handshakePkt);
+//     handshakePkt = merchant.receiveSYN_ACK(handshakePkt.seqNum,handshakePkt.ackNum);
+//     logPacket("Merchant", handshakePkt);
+// }

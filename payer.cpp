@@ -47,9 +47,9 @@ int Payer ::returnACK() {
     return this->seqNum;
 }
 
-bool Payer::setSYN_ACK(int seqNum, int ackNum, int payloadSize) {
+bool Payer::setSYN_ACK(int seqNum, int ackNum) {
     if (seqNum == this->ackNum) {
-        this->ackNum = this->ackNum + payloadSize;
+        this->ackNum = this->ackNum + 1;
         this->ACK = true;
         this->SYN = false;
         return true;
@@ -97,8 +97,8 @@ Header Payer::receiveSYNAndSendACK(int seqNum){
     return h1;
 }
 
-Header Payer::receiveSYN_ACK(int seqNum, int ackNum, int payloadSize){
-    this -> setSYN_ACK(seqNum,ackNum,payloadSize);
+Header Payer::receiveSYN_ACK(int seqNum, int ackNum){
+    this -> setSYN_ACK(seqNum,ackNum);
     Header h1;
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;

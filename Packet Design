@@ -1,0 +1,6 @@
+000 - Merchant Sends SYN
+001 - Payer Receives SYN and Sends ACK
+010 - Merchant Receives ACK and sends SYN_ACK
+011 - Payer Sends SYN
+100 - Merchant Receives SYN and Sends ACK
+101 - Payer Receives ACK and sends SYN_ACK 

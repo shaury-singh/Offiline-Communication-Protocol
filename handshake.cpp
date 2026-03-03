@@ -24,16 +24,67 @@ void logPacket(const std::string& sender, const Header& pkt) {
     logFile.close();
 }
 
-void handshakeInitPayer(Merchant &merchant, Payer &payer){
-    Header handshakePkt = payer.sendSYN();
-    logPacket("Payer", handshakePkt);
-    handshakePkt = merchant.receiveSYNAndSendACK(handshakePkt.seqNum); 
-    logPacket("Merchant", handshakePkt);
-    handshakePkt = payer.receiveACKAndSendSYN_ACK(handshakePkt.seqNum,handshakePkt.ackNum);
-    logPacket("Payer", handshakePkt);
+void controllerHandshake(int pktCode, Merchant &merchant, Payer &payer){
+    switch (pktCode){
+        case 0:{
+            Header h = merchant.sendSYN();
+            logPacket("Merchant",h);
+            break;
+        }
+        case 1:{
+            int seqNum = merchant.getNum()[0];
+            Header h = payer.receiveSYNAndSendACK(seqNum);
+            logPacket("Payer",h);
+            break;
+        }
+        case 2:{
+            int seqNum = payer.getNum()[0];
+            int ackNum = payer.getNum()[1];
+            Header h = merchant.receiveACKAndSendSYN_ACK(seqNum,ackNum);
+            logPacket("Merchant",h);
+            break;
+        }
+        case 3:{
+            Header h = payer.sendSYN();
+            logPacket("Payer",h);
+            break;
+        }
+        case 4:{
+            int seqNum = payer.getNum()[0];
+            Header h = merchant.receiveSYNAndSendACK(seqNum);
+            logPacket("Merchant",h);
+            break;
+        }
+        case 5:{
+            int seqNum = merchant.getNum()[0];
+            int ackNum = merchant.getNum()[1];
+            Header h = payer.receiveACKAndSendSYN_ACK(seqNum,ackNum);
+            logPacket("Payer",h);
+            break;
+        }
+        case 6:{
+            int seqNum = merchant.getNum()[0];
+            int ackNum = merchant.getNum()[1];
+            Header h = payer.receiveSYN_ACK(seqNum,ackNum);
+            logPacket("Payer",h);
+            break;
+        }
+        case 7:{
+            int seqNum = payer.getNum()[0];
+            int ackNum = payer.getNum()[1];
+            Header h = merchant.receiveSYN_ACK(seqNum,ackNum);
+            logPacket("Merchant",h);
+            break;
+        }
+        default:
+            break;
+        }
 }
 
 int main(){
-    handshakeInitPayer(merchant,payer);
+    controllerHandshake(3,merchant,payer);
+    controllerHandshake(4,merchant,payer);
+    controllerHandshake(5,merchant,payer);
+    controllerHandshake(7,merchant,payer);
     return 0;
 }

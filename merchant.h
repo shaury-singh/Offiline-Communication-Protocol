@@ -19,13 +19,13 @@ class Merchant {
         std::vector<int> returnSYN_ACK();
         bool setSYN(int seqNum);
         int returnACK();
-        bool setSYN_ACK(int seqNum, int ackNum, int payloadSize);
+        bool setSYN_ACK(int seqNum, int ackNum);
         std::vector<bool> getFlags();
         std::vector<int> getNum();
         Header sendSYN();
         Header receiveACKAndSendSYN_ACK(int seqNum, int ackNum);
         Header receiveSYNAndSendACK(int seqNum);
-        Header receiveSYN_ACK(int seqNum, int ackNum, int payloadSize);
+        Header receiveSYN_ACK(int seqNum, int ackNum);
 };
 
 #endif
