@@ -2,6 +2,7 @@
 #define MERCHANT_H
 
 #include <vector>
+#include "packet.h"
 
 class Merchant {
     private:
@@ -21,6 +22,10 @@ class Merchant {
         bool setSYN_ACK(int seqNum, int ackNum, int payloadSize);
         std::vector<bool> getFlags();
         std::vector<int> getNum();
+        Header sendSYN();
+        Header receiveACKAndSendSYN_ACK(int seqNum, int ackNum);
+        Header receiveSYNAndSendACK(int seqNum);
+        Header receiveSYN_ACK(int seqNum, int ackNum, int payloadSize);
 };
 
 #endif

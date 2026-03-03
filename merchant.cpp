@@ -1,4 +1,5 @@
 #include "merchant.h"
+#include "packet.h"
 #include "generatingFunctions.h"
 
 Merchant::Merchant(int id) {
@@ -16,7 +17,7 @@ int Merchant::generateSYN() {
 
 bool Merchant::setACK(int seqNum, int ackNum) {
     if (ackNum == this->seqNum + 1) {
-        this->seqNum = ackNum;
+        this->seqNum = this->seqNum + 1;
         ACK = true;
         SYN = false;
     } else {
@@ -63,4 +64,45 @@ std::vector<int> Merchant::getNum(){
 
 std::vector<bool> Merchant::getFlags(){
     return {this -> SYN, this -> ACK};
+}
+
+Header Merchant::sendSYN(){
+    Header h1;
+    int ISN = this->generateSYN();
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    return h1;
+}
+
+Header Merchant::receiveACKAndSendSYN_ACK(int seqNum, int ackNum){
+    this->setACK(seqNum,ackNum);
+    Header h1;
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    return h1;
+}
+
+Header Merchant::receiveSYNAndSendACK(int seqNum){
+    this -> setSYN(seqNum);
+    this -> returnACK();
+    Header h1;
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    return h1;
+}
+
+Header Merchant::receiveSYN_ACK(int seqNum, int ackNum, int payloadSize){
+    this -> setSYN_ACK(seqNum,ackNum,payloadSize);
+    Header h1;
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    return h1;
 }

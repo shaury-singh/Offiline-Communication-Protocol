@@ -65,3 +65,44 @@ std::vector<int> Payer::getNum(){
 std::vector<bool> Payer::getFlags(){
     return {this -> SYN, this -> ACK};
 }
+
+Header Payer::sendSYN(){
+    Header h1;
+    int ISN = this->generateSYN();
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    return h1;
+}
+
+Header Payer::receiveACKAndSendSYN_ACK(int seqNum, int ackNum){
+    this->setACK(seqNum,ackNum);
+    Header h1;
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    return h1;
+}
+
+Header Payer::receiveSYNAndSendACK(int seqNum){
+    this -> setSYN(seqNum);
+    this -> returnACK();
+    Header h1;
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    return h1;
+}
+
+Header Payer::receiveSYN_ACK(int seqNum, int ackNum, int payloadSize){
+    this -> setSYN_ACK(seqNum,ackNum,payloadSize);
+    Header h1;
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    return h1;
+}
