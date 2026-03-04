@@ -7,11 +7,10 @@
 #include <cstring>
 
 std::vector<unsigned char> deriveKey(const std::vector<unsigned char>& masterKey,const std::string& publicID) {
-    std::vector<unsigned char> derivedKey(16); // 128-bit AES key
+    std::vector<unsigned char> derivedKey(16);
     EVP_PKEY_CTX* pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_HKDF, NULL);
     EVP_PKEY_derive_init(pctx);
     EVP_PKEY_CTX_set_hkdf_md(pctx, EVP_sha256());
-    // Salt (can also be random or protocol constant)
     unsigned char salt[] = "protocol_salt";
     EVP_PKEY_CTX_set1_hkdf_salt(pctx, salt, sizeof(salt));
     EVP_PKEY_CTX_set1_hkdf_key(pctx, masterKey.data(), masterKey.size());

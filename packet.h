@@ -20,7 +20,6 @@ struct Payload{
 };
 
 struct Tail{
-    int challenge;
     int checkSum;
     int errorCorrection;
 };

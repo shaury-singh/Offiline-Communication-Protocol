@@ -26,6 +26,7 @@ class Merchant {
         Header receiveACKAndSendSYN_ACK(int seqNum, int ackNum);
         Header receiveSYNAndSendACK(int seqNum);
         Header receiveSYN_ACK(int seqNum, int ackNum);
+        Packet generateChallenge(int userID);
 };
 
 #endif

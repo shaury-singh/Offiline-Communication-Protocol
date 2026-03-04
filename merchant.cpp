@@ -106,3 +106,7 @@ Header Merchant::receiveSYN_ACK(int seqNum, int ackNum){
     h1.ACK = this -> ACK;
     return h1;
 }
+
+Packet Merchant::generateChallenge(int userID){
+    
+}
