@@ -7,6 +7,7 @@
 
 class Payer {
     private:
+        connState state;
         int secretKey;
         int SenderID;
         int seqNum;

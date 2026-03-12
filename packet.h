@@ -3,12 +3,28 @@
 
 #include <string>
 
+enum connState{
+    CLOSED,
+    SYN_SENT,
+    SYN_RECEIVED,
+    ESTABLISHED
+};
+
+enum StatusCode{
+    OK = 0,
+    INVALID_STATE,
+    INVALID_PACKET,
+    UNEXPECTED_ACK,
+    UNEXPECTED_SYN,
+    HANDSHAKE_COMPLETE
+};
+
 struct Header{
     int pktCode;
     int senderID;
     int seqNum;
     int ackNum;
-    int statusCode;
+    StatusCode statusCode;
     int stateCode;
     bool SYN;
     bool ACK;

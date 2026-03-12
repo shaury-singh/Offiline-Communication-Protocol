@@ -3,6 +3,7 @@
 #include <vector>
 
 Payer :: Payer(int id, int key){
+    state = CLOSED;
     this->SenderID = id;
     this->secretKey = key;
 }
@@ -89,16 +90,6 @@ Header Payer::receiveACKAndSendSYN_ACK(int seqNum, int ackNum){
 Header Payer::receiveSYNAndSendACK(int seqNum){
     this -> setSYN(seqNum);
     this -> returnACK();
-    Header h1;
-    h1.seqNum = this -> seqNum;
-    h1.ackNum = this-> ackNum;
-    h1.SYN = this -> SYN;
-    h1.ACK = this -> ACK;
-    return h1;
-}
-
-Header Payer::receiveSYN_ACK(int seqNum, int ackNum){
-    this -> setSYN_ACK(seqNum,ackNum);
     Header h1;
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;

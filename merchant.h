@@ -6,6 +6,7 @@
 
 class Merchant {
     private:
+        connState state;
         int globalMasterKey;
         int merchantID;
         int seqNum;

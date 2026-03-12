@@ -3,6 +3,7 @@
 #include "generatingFunctions.h"
 
 Merchant::Merchant(int id) {
+    state = CLOSED;
     merchantID = id;
     globalMasterKey = 17374626;
 }
@@ -68,11 +69,17 @@ std::vector<bool> Merchant::getFlags(){
 
 Header Merchant::sendSYN(){
     Header h1;
-    int ISN = this->generateSYN();
+    if (this->state != CLOSED){
+        h1.statusCode = INVALID_STATE;
+        return h1;
+    }
+    this->generateSYN();
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
+    this->state = SYN_SENT;
+    h1.statusCode = OK;
     return h1;
 }
 
@@ -105,8 +112,4 @@ Header Merchant::receiveSYN_ACK(int seqNum, int ackNum){
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
     return h1;
-}
-
-Packet Merchant::generateChallenge(int userID){
-    
 }
