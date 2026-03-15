@@ -1,11 +1,17 @@
 #include "payer.h"
+#include "keyDerivation.h"
 #include "generatingFunctions.h"
 #include <vector>
+#include <string>
+#include <iostream>
 
-Payer :: Payer(int id, int key){
+using namespace std;
+
+Payer :: Payer(int id){
     state = CLOSED;
     this->SenderID = id;
-    this->secretKey = key;
+    this->secretKey = deriveKey("17374626",std::to_string(id));
+    cout << "key: " << this->secretKey;
 }
 
 int Payer :: generateSYN(){
@@ -88,12 +94,34 @@ Header Payer::receiveACKAndSendSYN_ACK(int seqNum, int ackNum){
 }
 
 Header Payer::receiveSYNAndSendACK(int seqNum){
+    Header h1{};
+    if (this->state != CLOSED){
+        h1.statusCode = INVALID_STATE;
+        return h1;
+    }
     this -> setSYN(seqNum);
     this -> returnACK();
-    Header h1;
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
+    this->state = ACK_SENT;
+    h1.statusCode = OK;
+    return h1;
+}
+
+Header Payer::receiveSYN_ACK(int seqNum, int ackNum){
+    Header h1{};
+    if (this->state != ACK_SENT){
+        h1.statusCode = INVALID_STATE;
+        return h1;
+    }
+    this -> setSYN_ACK(seqNum,ackNum);
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    this->state = ESTABLISHED;
+    h1.statusCode = OK;
     return h1;
 }

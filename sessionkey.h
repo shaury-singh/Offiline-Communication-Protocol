@@ -8,4 +8,4 @@ using namespace std;
 
 string generateRandomKey();
 
-#endif sessionkey.h
+#endif
