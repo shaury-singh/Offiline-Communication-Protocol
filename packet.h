@@ -6,7 +6,9 @@
 enum connState{
     CLOSED,
     SYN_SENT,
+    ACK_RECEIVED,
     SYN_RECEIVED,
+    ACK_SENT,
     ESTABLISHED
 };
 

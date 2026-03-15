@@ -17,6 +17,9 @@ int Merchant::generateSYN() {
 }
 
 bool Merchant::setACK(int seqNum, int ackNum) {
+    if (this->state != SYN_SENT){
+        return false;
+    }
     if (ackNum == this->seqNum + 1) {
         this->seqNum = this->seqNum + 1;
         ACK = true;
@@ -25,6 +28,7 @@ bool Merchant::setACK(int seqNum, int ackNum) {
         return false;
     }
     this->ackNum = seqNum + 1;
+    this->state = ACK_RECEIVED;
     return true;
 }
 
@@ -33,6 +37,9 @@ std::vector<int> Merchant::returnSYN_ACK() {
 }
 
 bool Merchant::setSYN(int seqNum) {
+    if (this->state != CLOSED){
+        return false;
+    }
     if (seqNum == 0) {
         return false;
     }
@@ -40,6 +47,7 @@ bool Merchant::setSYN(int seqNum) {
     this->ackNum = seqNum + 1;
     this->SYN = true;
     this->ACK = false;
+    this->state = SYN_RECEIVED;
     return true;
 }
 
@@ -49,6 +57,9 @@ int Merchant::returnACK() {
 }
 
 bool Merchant::setSYN_ACK(int seqNum, int ackNum) {
+    if (this->state != ACK_SENT){
+        return false;
+    }
     if (seqNum == this->ackNum) {
         this->ackNum = this->ackNum + 1;
         this->ACK = true;
@@ -68,7 +79,7 @@ std::vector<bool> Merchant::getFlags(){
 }
 
 Header Merchant::sendSYN(){
-    Header h1;
+    Header h1{};
     if (this->state != CLOSED){
         h1.statusCode = INVALID_STATE;
         return h1;
@@ -84,32 +95,55 @@ Header Merchant::sendSYN(){
 }
 
 Header Merchant::receiveACKAndSendSYN_ACK(int seqNum, int ackNum){
-    this->setACK(seqNum,ackNum);
-    Header h1;
+    Header h1{};
+    bool flag = this->setACK(seqNum,ackNum);
+    if (this->state != ACK_RECEIVED || flag == false){
+        if (flag == false){
+            h1.statusCode = INVALID_PACKET;
+            return h1;
+        }
+        h1.statusCode = INVALID_STATE;
+        return h1;
+    }
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
+    this->state = ESTABLISHED;
     return h1;
 }
 
 Header Merchant::receiveSYNAndSendACK(int seqNum){
-    this -> setSYN(seqNum);
+    bool flag = this -> setSYN(seqNum);
+    Header h1{};
+    if (this->state != SYN_RECEIVED || flag == false){
+        if (flag == false){
+            h1.statusCode = INVALID_PACKET;
+            return h1;
+        }
+        h1.statusCode = INVALID_STATE;
+        return h1;
+    }
     this -> returnACK();
-    Header h1;
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
+    this->state = ACK_SENT;
     return h1;
 }
 
 Header Merchant::receiveSYN_ACK(int seqNum, int ackNum){
-    this -> setSYN_ACK(seqNum,ackNum);
-    Header h1;
+    bool  flag = this -> setSYN_ACK(seqNum,ackNum);
+    Header h1{};
+    if (flag == false){
+        h1.statusCode = INVALID_STATE;
+        return h1;
+    }
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
+    this->state = ESTABLISHED;
     return h1;
 }

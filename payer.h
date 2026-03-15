@@ -8,14 +8,14 @@
 class Payer {
     private:
         connState state;
-        int secretKey;
+        std::string secretKey;
         int SenderID;
         int seqNum;
         int ackNum;
         bool SYN;
         bool ACK;
     public:
-        Payer(int id, int key);
+        Payer(int id);
         int generateSYN();
         bool setACK(int seqNum, int ackNum);
         std::vector<int> returnSYN_ACK();
