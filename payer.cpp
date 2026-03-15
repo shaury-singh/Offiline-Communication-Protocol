@@ -23,6 +23,9 @@ int Payer :: generateSYN(){
 }
 
 bool Payer :: setACK(int seqNum, int ackNum) {
+    if (this->state != SYN_SENT){
+        return false;
+    }
     if (ackNum == this->seqNum + 1) {
         this->seqNum = ackNum;
         ACK = true;
@@ -31,6 +34,7 @@ bool Payer :: setACK(int seqNum, int ackNum) {
         return false;
     }
     this->ackNum = seqNum + 1;
+    this->state = ACK_RECEIVED;
     return true;
 }
 
@@ -39,6 +43,9 @@ std::vector<int> Payer :: returnSYN_ACK() {
 }
 
 bool Payer::setSYN(int seqNum) {
+    if (this->state != CLOSED){
+        return false;
+    }
     if (seqNum == 0) {
         return false;
     }
@@ -46,6 +53,7 @@ bool Payer::setSYN(int seqNum) {
     this->ackNum = seqNum + 1;
     this->SYN = true;
     this->ACK = false;
+    this->state = SYN_RECEIVED;
     return true;
 }
 
@@ -55,6 +63,9 @@ int Payer ::returnACK() {
 }
 
 bool Payer::setSYN_ACK(int seqNum, int ackNum) {
+    if (this->state != ACK_SENT){
+        return false;
+    }
     if (seqNum == this->ackNum) {
         this->ackNum = this->ackNum + 1;
         this->ACK = true;
@@ -74,54 +85,71 @@ std::vector<bool> Payer::getFlags(){
 }
 
 Header Payer::sendSYN(){
-    Header h1;
-    int ISN = this->generateSYN();
-    h1.seqNum = this -> seqNum;
-    h1.ackNum = this-> ackNum;
-    h1.SYN = this -> SYN;
-    h1.ACK = this -> ACK;
-    return h1;
-}
-
-Header Payer::receiveACKAndSendSYN_ACK(int seqNum, int ackNum){
-    this->setACK(seqNum,ackNum);
-    Header h1;
-    h1.seqNum = this -> seqNum;
-    h1.ackNum = this-> ackNum;
-    h1.SYN = this -> SYN;
-    h1.ACK = this -> ACK;
-    return h1;
-}
-
-Header Payer::receiveSYNAndSendACK(int seqNum){
     Header h1{};
     if (this->state != CLOSED){
         h1.statusCode = INVALID_STATE;
         return h1;
     }
-    this -> setSYN(seqNum);
+    int ISN = this->generateSYN();
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    this->state = SYN_SENT;
+    h1.statusCode = OK;
+    return h1;
+}
+
+Header Payer::receiveACKAndSendSYN_ACK(int seqNum, int ackNum){
+    Header h1{};
+    bool flag = this->setACK(seqNum,ackNum);
+    if (this->state != ACK_RECEIVED || flag == false){
+        if (flag == false){
+            h1.statusCode = INVALID_PACKET;
+            return h1;
+        }
+        h1.statusCode = INVALID_STATE;
+        return h1;
+    }
+    h1.seqNum = this -> seqNum;
+    h1.ackNum = this-> ackNum;
+    h1.SYN = this -> SYN;
+    h1.ACK = this -> ACK;
+    this->state = ESTABLISHED;
+    return h1;
+}
+
+Header Payer::receiveSYNAndSendACK(int seqNum){
+    bool flag = this -> setSYN(seqNum);
+    Header h1{};
+    if (this->state != SYN_RECEIVED || flag == false){
+        if (flag == false){
+            h1.statusCode = INVALID_PACKET;
+            return h1;
+        }
+        h1.statusCode = INVALID_STATE;
+        return h1;
+    }
     this -> returnACK();
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
     this->state = ACK_SENT;
-    h1.statusCode = OK;
     return h1;
 }
 
 Header Payer::receiveSYN_ACK(int seqNum, int ackNum){
+    bool flag = this -> setSYN_ACK(seqNum,ackNum);
     Header h1{};
-    if (this->state != ACK_SENT){
+    if (flag == false){
         h1.statusCode = INVALID_STATE;
         return h1;
     }
-    this -> setSYN_ACK(seqNum,ackNum);
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
     this->state = ESTABLISHED;
-    h1.statusCode = OK;
     return h1;
 }

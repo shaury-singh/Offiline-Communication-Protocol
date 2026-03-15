@@ -69,54 +69,38 @@ std::vector<bool> Merchant::getFlags(){
 
 Header Merchant::sendSYN(){
     Header h1{};
-    if (this->state != CLOSED){
-        h1.statusCode = INVALID_STATE;
-        return h1;
-    }
     this->generateSYN();
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
-    this->state = SYN_SENT;
-    h1.statusCode = OK;
     return h1;
 }
 
 Header Merchant::receiveACKAndSendSYN_ACK(int seqNum, int ackNum){
     Header h1{};
-    if (this->state != SYN_SENT){
-        h1.statusCode = INVALID_STATE;
-        return h1;
-    }
     this->setACK(seqNum,ackNum);
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
-    this->state = SYN_ACK_SENT;
-    h1.statusCode = OK;
     return h1;
 }
 
 Header Merchant::receiveSYNAndSendACK(int seqNum){
     Header h1{};
-    if (this->state != CLOSED){
-        h1.statusCode = INVALID_STATE;
-    }
     this -> setSYN(seqNum);
     this -> returnACK();
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
-    this->state = ESTABLISHED;
     return h1;
 }
 
 Header Merchant::receiveSYN_ACK(int seqNum, int ackNum){
+    Header h1{};
     this -> setSYN_ACK(seqNum,ackNum);
-    Header h1;
     h1.seqNum = this -> seqNum;
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
