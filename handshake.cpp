@@ -28,52 +28,50 @@ void controllerHandshake(int pktCode, Merchant &merchant, Payer &payer){
     switch (pktCode){
         case 0:{
             Header h = merchant.sendSYN();
-            logPacket("Merchant",h);
+            logPacket("65425",h);
             break;
         }
         case 1:{
             int seqNum = merchant.getNum()[0];
             Header h = payer.receiveSYNAndSendACK(seqNum);
-            logPacket("Payer",h);
+            logPacket("16073",h);
             break;
         }
         case 2:{
             int seqNum = payer.getNum()[0];
             int ackNum = payer.getNum()[1];
             Header h = merchant.receiveACKAndSendSYN_ACK(seqNum,ackNum);
-            logPacket("Merchant",h);
+            logPacket("65425",h);
             break;
         }
         case 3:{
             Header h = payer.sendSYN();
-            logPacket("Payer",h);
+            logPacket("16073",h);
             break;
         }
         case 4:{
             int seqNum = payer.getNum()[0];
             Header h = merchant.receiveSYNAndSendACK(seqNum);
-            logPacket("Merchant",h);
+            logPacket("65425",h);
             break;
         }
         case 5:{
             int seqNum = merchant.getNum()[0];
             int ackNum = merchant.getNum()[1];
             Header h = payer.receiveACKAndSendSYN_ACK(seqNum,ackNum);
-            logPacket("Payer",h);
+            logPacket("16073",h);
             break;
         }
-        case 6:{
+        case -1:{
             int seqNum = merchant.getNum()[0];
             int ackNum = merchant.getNum()[1];
             Header h = payer.receiveSYN_ACK(seqNum,ackNum);
-            logPacket("Payer",h);
             break;
         }
-        case 7:{
+        case -2:{
             int seqNum = payer.getNum()[0];
             int ackNum = payer.getNum()[1];
             Header h = merchant.receiveSYN_ACK(seqNum,ackNum);
-            logPacket("Merchant",h);
             break;
         }
         default:
@@ -84,7 +82,7 @@ void controllerHandshake(int pktCode, Merchant &merchant, Payer &payer){
 int main(){
     controllerHandshake(3,merchant,payer);
     controllerHandshake(4,merchant,payer);
-    controllerHandshake(5,merchant,payer);
-    controllerHandshake(7,merchant,payer);
+    controllerHandshake(6,merchant,payer);
+    controllerHandshake(-2,merchant,payer);
     return 0;
 }
