@@ -1,11 +1,15 @@
 #include "merchant.h"
 #include "packet.h"
 #include "generatingFunctions.h"
+#include "keyDerivation.h"
+#include "encryption.h"
+#include <string>
+#include <iostream>
 
 Merchant::Merchant(int id) {
     state = CLOSED;
     merchantID = id;
-    globalMasterKey = 17374626;
+    globalMasterKey = "17374626";
 }
 
 int Merchant::generateSYN() {
@@ -146,4 +150,28 @@ Header Merchant::receiveSYN_ACK(int seqNum, int ackNum){
     h1.ACK = this -> ACK;
     this->state = ESTABLISHED;
     return h1;
+}
+
+Packet Merchant::validatePacketAndgenerateChallenge(int seqNum, std::string userID){
+    Packet p1{};
+    if (this->state != ESTABLISHED){
+        p1.header.statusCode = INVALID_STATE;
+        return p1;
+    }
+    if (seqNum != this->ackNum){
+        p1.header.statusCode = INVALID_PACKET;
+        return p1;
+    }
+    std::string challenge = std::to_string(generateSequence(10000000,99999999));
+    std::string secretKey = deriveKey(this->globalMasterKey,userID);
+    std::string challengeString = encrypt(secretKey,challenge);
+    this->ackNum += userID.size();
+    this->seqNum++;
+    p1.header.seqNum = this->seqNum;
+    this->seqNum += challengeString.size();
+    p1.header.ackNum = this->ackNum;
+    p1.header.SYN = this->SYN;
+    p1.header.ACK = this->ACK;
+    p1.payload.stringData = challengeString;
+    return p1;
 }

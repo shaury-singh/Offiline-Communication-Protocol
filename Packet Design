@@ -4,3 +4,6 @@
 011 - Payer Sends SYN
 100 - Merchant Receives SYN and Sends ACK
 101 - Payer Receives ACK and sends SYN_ACK 
+110 - Payer Sends SenderID as Payload
+111 - 
+000 - 

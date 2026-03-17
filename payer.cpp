@@ -7,10 +7,10 @@
 
 using namespace std;
 
-Payer :: Payer(int id){
+Payer :: Payer(std::string id){
     state = CLOSED;
     this->SenderID = id;
-    this->secretKey = deriveKey("17374626",std::to_string(id));
+    this->secretKey = deriveKey("17374626",id);
     cout << "key: " << this->secretKey;
 }
 
@@ -152,4 +152,22 @@ Header Payer::receiveSYN_ACK(int seqNum, int ackNum){
     h1.ACK = this -> ACK;
     this->state = ESTABLISHED;
     return h1;
+}
+
+Packet Payer::sendIDasPayload(){
+    Packet p1{};
+    if (this->state != ESTABLISHED){
+        p1.header.statusCode = INVALID_STATE;
+        return p1;
+    }
+    p1.header.senderID = this->SenderID;
+    this->seqNum++;
+    p1.header.seqNum = this->seqNum;
+    this->seqNum += this->SenderID.size();
+    p1.header.ackNum = this->ackNum;
+    p1.header.SYN = true;
+    p1.header.ACK = true;
+    p1.header.statusCode = OK;
+    p1.payload.stringData = this->SenderID;
+    return p1;
 }
