@@ -23,7 +23,7 @@ enum StatusCode{
 
 struct Header{
     int pktCode;
-    int senderID;
+    std::string senderID;
     int seqNum;
     int ackNum;
     StatusCode statusCode;
@@ -34,6 +34,7 @@ struct Header{
 
 struct Payload{
     int data;
+    std::string stringData;
     std::string rachetKey;
 };
 

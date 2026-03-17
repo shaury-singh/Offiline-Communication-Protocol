@@ -9,9 +9,10 @@
 using namespace std;
 
 Merchant merchant(65425);
-Payer payer(16073);
+Payer payer("16073");
+Packet p{};
 
-void logPacket(const std::string& sender, const Header& pkt) {
+void logHeader(const std::string& sender, const Header& pkt) {
     std::ofstream logFile("handshake_log.txt", std::ios::app);
     if (logFile.is_open()) {
         logFile << sender << " : "
@@ -24,43 +25,70 @@ void logPacket(const std::string& sender, const Header& pkt) {
     logFile.close();
 }
 
-void controllerHandshake(int pktCode, Merchant &merchant, Payer &payer){
+void logPacket(const std::string& sender, const Packet& pkt) {
+    std::ofstream logFile("handshake_log.txt", std::ios::app);
+    if (logFile.is_open()) {
+        logFile << sender << " : "
+                << "[" << pkt.header.seqNum << "]"
+                << "[" << pkt.header.ackNum << "]"
+                << "[" << pkt.header.SYN << "]"
+                << "[" << pkt.header.ACK << "]"
+                << "[" << pkt.header.senderID << "]"
+                << "[" << pkt.payload.data << "]"
+                << "[" << pkt.payload.stringData << "]"
+                << std::endl;
+    }
+    logFile.close();
+}
+
+void controller(int pktCode, Merchant &merchant, Payer &payer){
     switch (pktCode){
         case 0:{
             Header h = merchant.sendSYN();
-            logPacket("65425",h);
+            logHeader("65425",h);
             break;
         }
         case 1:{
             int seqNum = merchant.getNum()[0];
             Header h = payer.receiveSYNAndSendACK(seqNum);
-            logPacket("16073",h);
+            logHeader("16073",h);
             break;
         }
         case 2:{
             int seqNum = payer.getNum()[0];
             int ackNum = payer.getNum()[1];
             Header h = merchant.receiveACKAndSendSYN_ACK(seqNum,ackNum);
-            logPacket("65425",h);
+            logHeader("65425",h);
             break;
         }
         case 3:{
             Header h = payer.sendSYN();
-            logPacket("16073",h);
+            logHeader("16073",h);
             break;
         }
         case 4:{
             int seqNum = payer.getNum()[0];
             Header h = merchant.receiveSYNAndSendACK(seqNum);
-            logPacket("65425",h);
+            logHeader("65425",h);
             break;
         }
         case 5:{
             int seqNum = merchant.getNum()[0];
             int ackNum = merchant.getNum()[1];
             Header h = payer.receiveACKAndSendSYN_ACK(seqNum,ackNum);
-            logPacket("16073",h);
+            logHeader("16073",h);
             break;
+        }
+        case 6:{
+            p = payer.sendIDasPayload();
+            logPacket("16073",p);
+        }
+        case 7:{
+            std::string userID = p.payload.stringData;
+            int seqNum = p.header.seqNum;
+            cout << "Seq Num: " << seqNum << endl;
+            p = merchant.validatePacketAndgenerateChallenge(seqNum,userID);
+            logPacket("65425",p);
         }
         case -1:{
             int seqNum = merchant.getNum()[0];
@@ -72,6 +100,7 @@ void controllerHandshake(int pktCode, Merchant &merchant, Payer &payer){
             int seqNum = payer.getNum()[0];
             int ackNum = payer.getNum()[1];
             Header h = merchant.receiveSYN_ACK(seqNum,ackNum);
+            logHeader("65425",h);
             break;
         }
         default:
@@ -80,9 +109,10 @@ void controllerHandshake(int pktCode, Merchant &merchant, Payer &payer){
 }
 
 int main(){
-    controllerHandshake(3,merchant,payer);
-    controllerHandshake(4,merchant,payer);
-    controllerHandshake(6,merchant,payer);
-    controllerHandshake(-2,merchant,payer);
+    controller(3,merchant,payer);
+    controller(4,merchant,payer);
+    controller(5,merchant,payer);
+    controller(-2,merchant,payer);
+    controller(6,merchant,payer);
     return 0;
 }

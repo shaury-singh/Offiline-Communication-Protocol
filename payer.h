@@ -9,13 +9,13 @@ class Payer {
     private:
         connState state;
         std::string secretKey;
-        int SenderID;
+        std::string SenderID;
         int seqNum;
         int ackNum;
         bool SYN;
         bool ACK;
     public:
-        Payer(int id);
+        Payer(std::string id);
         int generateSYN();
         bool setACK(int seqNum, int ackNum);
         std::vector<int> returnSYN_ACK();
@@ -28,6 +28,7 @@ class Payer {
         Header receiveACKAndSendSYN_ACK(int seqNum, int ackNum);
         Header receiveSYNAndSendACK(int seqNum);
         Header receiveSYN_ACK(int seqNum, int ackNum);
+        Packet sendIDasPayload();
 };
 
 #endif

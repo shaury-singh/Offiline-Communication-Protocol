@@ -7,7 +7,7 @@
 class Merchant {
     private:
         connState state;
-        int globalMasterKey;
+        std::string globalMasterKey;
         int merchantID;
         int seqNum;
         int ackNum;
@@ -27,7 +27,7 @@ class Merchant {
         Header receiveACKAndSendSYN_ACK(int seqNum, int ackNum);
         Header receiveSYNAndSendACK(int seqNum);
         Header receiveSYN_ACK(int seqNum, int ackNum);
-        Packet generateChallenge(int userID);
+        Packet validatePacketAndgenerateChallenge(int seqNum, std::string userID);
 };
 
 #endif
