@@ -82,6 +82,7 @@ void controller(int pktCode, Merchant &merchant, Payer &payer){
         case 6:{
             p = payer.sendIDasPayload();
             logPacket("16073",p);
+            break;
         }
         case 7:{
             std::string userID = p.payload.stringData;
@@ -89,6 +90,14 @@ void controller(int pktCode, Merchant &merchant, Payer &payer){
             cout << "Seq Num: " << seqNum << endl;
             p = merchant.validatePacketAndgenerateChallenge(seqNum,userID);
             logPacket("65425",p);
+            break;
+        }
+        case 8:{
+            int seqNum = p.header.seqNum;
+            std::string challenge = p.payload.stringData;
+            p = payer.receiveChallengeandSendDecryptedSecret(seqNum,challenge);
+            logPacket("16073",p);
+            break;
         }
         case -1:{
             int seqNum = merchant.getNum()[0];
@@ -114,5 +123,7 @@ int main(){
     controller(5,merchant,payer);
     controller(-2,merchant,payer);
     controller(6,merchant,payer);
+    controller(7,merchant,payer);
+    controller(8,merchant,payer);
     return 0;
 }

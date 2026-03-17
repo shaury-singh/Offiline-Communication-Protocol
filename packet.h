@@ -9,7 +9,10 @@ enum connState{
     ACK_RECEIVED,
     SYN_RECEIVED,
     ACK_SENT,
-    ESTABLISHED
+    ESTABLISHED,
+    CHALLENGE_SENT,
+    ID_SENT,
+    CHALLENGE_COMPLETE
 };
 
 enum StatusCode{
@@ -18,7 +21,8 @@ enum StatusCode{
     INVALID_PACKET,
     UNEXPECTED_ACK,
     UNEXPECTED_SYN,
-    HANDSHAKE_COMPLETE
+    HANDSHAKE_COMPLETE,
+    CHALLENGE_COMPLETE
 };
 
 struct Header{

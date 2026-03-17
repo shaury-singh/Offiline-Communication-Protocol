@@ -1,6 +1,7 @@
 #include "payer.h"
 #include "keyDerivation.h"
 #include "generatingFunctions.h"
+#include "encryption.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -150,6 +151,7 @@ Header Payer::receiveSYN_ACK(int seqNum, int ackNum){
     h1.ackNum = this-> ackNum;
     h1.SYN = this -> SYN;
     h1.ACK = this -> ACK;
+    h1.statusCode = HANDSHAKE_COMPLETE;
     this->state = ESTABLISHED;
     return h1;
 }
@@ -169,5 +171,27 @@ Packet Payer::sendIDasPayload(){
     p1.header.ACK = true;
     p1.header.statusCode = OK;
     p1.payload.stringData = this->SenderID;
+    this->state = ID_SENT;
+    return p1;
+}
+
+Packet Payer::receiveChallengeandSendDecryptedSecret(int seqNum, std::string challenge){
+    Packet p1{};
+    if (this->state != ID_SENT){
+        p1.header.statusCode = INVALID_PACKET;
+        return p1;
+    }
+    if (seqNum != this->ackNum){
+        p1.header.statusCode = INVALID_PACKET;
+        return p1;
+    }
+    this->ackNum += challenge.size();
+    string decryptChallenge = decrypt(this->secretKey,challenge);
+    p1.header.seqNum = this->seqNum;
+    p1.header.ackNum = this->ackNum;
+    p1.header.SYN = this->SYN;
+    p1.header.ACK = this->ACK;
+    p1.header.senderID = this->SenderID;
+    p1.payload.stringData = decryptChallenge;
     return p1;
 }

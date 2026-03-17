@@ -165,6 +165,8 @@ Packet Merchant::validatePacketAndgenerateChallenge(int seqNum, std::string user
     std::string challenge = std::to_string(generateSequence(10000000,99999999));
     std::string secretKey = deriveKey(this->globalMasterKey,userID);
     std::string challengeString = encrypt(secretKey,challenge);
+    std::cout << "Encrypted String: " << challengeString << std::endl;
+    std::cout << "challenge is: " << challenge << " and size is: " << challengeString.size() << std::endl;
     this->ackNum += userID.size();
     this->seqNum++;
     p1.header.seqNum = this->seqNum;
@@ -172,6 +174,8 @@ Packet Merchant::validatePacketAndgenerateChallenge(int seqNum, std::string user
     p1.header.ackNum = this->ackNum;
     p1.header.SYN = this->SYN;
     p1.header.ACK = this->ACK;
+    p1.header.statusCode = OK;
     p1.payload.stringData = challengeString;
+    this->state = CHALLENGE_SENT;
     return p1;
 }
