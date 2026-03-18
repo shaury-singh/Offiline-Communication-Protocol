@@ -12,7 +12,7 @@ enum connState{
     ESTABLISHED,
     CHALLENGE_SENT,
     ID_SENT,
-    CHALLENGE_COMPLETE
+    INVALID_PAYER
 };
 
 enum StatusCode{
@@ -22,7 +22,8 @@ enum StatusCode{
     UNEXPECTED_ACK,
     UNEXPECTED_SYN,
     HANDSHAKE_COMPLETE,
-    CHALLENGE_COMPLETE
+    CHALLENGE_DECRYPTED,
+    INVALID_USER
 };
 
 struct Header{

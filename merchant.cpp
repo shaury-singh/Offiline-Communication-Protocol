@@ -177,5 +177,32 @@ Packet Merchant::validatePacketAndgenerateChallenge(int seqNum, std::string user
     p1.header.statusCode = OK;
     p1.payload.stringData = challengeString;
     this->state = CHALLENGE_SENT;
+    this->challenge = challengeString;
+    this->secretKey = secretKey;
     return p1;
+}
+
+Header Merchant::authenticateUser(int seqNum, int ackNum, std::string decryptedChallenge){
+    Header h1{};
+    if (this->state != CHALLENGE_SENT){
+        h1.statusCode = INVALID_STATE;
+        return h1;
+    }
+    if (this->ackNum != seqNum){
+        h1.statusCode = INVALID_PACKET;
+        return h1;   
+    }
+    std::string challengeStringDecrypted = decrypt(this->secretKey,this->challenge); 
+    if (decryptedChallenge != challengeStringDecrypted){
+        h1.statusCode = INVALID_USER;
+        this->state = INVALID_PAYER;
+        return h1;
+    }
+    this -> seqNum++;
+    h1.senderID = this->merchantID;
+    h1.seqNum = this->seqNum;
+    h1.ackNum = this->ackNum;
+    h1.SYN = this->SYN;
+    h1.ACK = this->ACK;
+    h1.statusCode = OK;
 }

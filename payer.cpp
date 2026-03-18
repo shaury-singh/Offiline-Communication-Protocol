@@ -178,7 +178,7 @@ Packet Payer::sendIDasPayload(){
 Packet Payer::receiveChallengeandSendDecryptedSecret(int seqNum, std::string challenge){
     Packet p1{};
     if (this->state != ID_SENT){
-        p1.header.statusCode = INVALID_PACKET;
+        p1.header.statusCode = INVALID_STATE;
         return p1;
     }
     if (seqNum != this->ackNum){
@@ -192,6 +192,7 @@ Packet Payer::receiveChallengeandSendDecryptedSecret(int seqNum, std::string cha
     p1.header.SYN = this->SYN;
     p1.header.ACK = this->ACK;
     p1.header.senderID = this->SenderID;
+    p1.header.statusCode = CHALLENGE_DECRYPTED;
     p1.payload.stringData = decryptChallenge;
     return p1;
 }
