@@ -1,3 +1,5 @@
+*.wav
+
 # Prerequisites
 *.d
 *.vscode
