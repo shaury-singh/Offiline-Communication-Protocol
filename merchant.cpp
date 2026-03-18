@@ -3,6 +3,7 @@
 #include "generatingFunctions.h"
 #include "keyDerivation.h"
 #include "encryption.h"
+#include "sessionkey.h"
 #include <string>
 #include <iostream>
 
@@ -170,6 +171,7 @@ Packet Merchant::validatePacketAndgenerateChallenge(int seqNum, std::string user
     this->ackNum += userID.size();
     this->seqNum++;
     p1.header.seqNum = this->seqNum;
+    p1.header.senderID = this->merchantID;
     this->seqNum += challengeString.size();
     p1.header.ackNum = this->ackNum;
     p1.header.SYN = this->SYN;
@@ -182,27 +184,31 @@ Packet Merchant::validatePacketAndgenerateChallenge(int seqNum, std::string user
     return p1;
 }
 
-Header Merchant::authenticateUser(int seqNum, int ackNum, std::string decryptedChallenge){
-    Header h1{};
+Packet Merchant::authenticateUser(int seqNum, std::string decryptedChallenge){
+    Packet p1{};
     if (this->state != CHALLENGE_SENT){
-        h1.statusCode = INVALID_STATE;
-        return h1;
+        p1.header.statusCode = INVALID_STATE;
+        return p1;
     }
     if (this->ackNum != seqNum){
-        h1.statusCode = INVALID_PACKET;
-        return h1;   
+        p1.header.statusCode = INVALID_PACKET;
+        return p1;   
     }
     std::string challengeStringDecrypted = decrypt(this->secretKey,this->challenge); 
     if (decryptedChallenge != challengeStringDecrypted){
-        h1.statusCode = INVALID_USER;
+        p1.header.statusCode = INVALID_USER;
         this->state = INVALID_PAYER;
-        return h1;
+        return p1;
     }
     this -> seqNum++;
-    h1.senderID = this->merchantID;
-    h1.seqNum = this->seqNum;
-    h1.ackNum = this->ackNum;
-    h1.SYN = this->SYN;
-    h1.ACK = this->ACK;
-    h1.statusCode = OK;
+    p1.header.senderID = this->merchantID;
+    p1.header.seqNum = this->seqNum;
+    p1.header.ackNum = this->ackNum;
+    p1.header.SYN = this->SYN;
+    p1.header.ACK = this->ACK;
+    p1.header.statusCode = OK;
+    this->state = VALIDATED;
+    p1.payload.stringData = encrypt(this->secretKey,std::to_string(generateSequence(1000000,999999)));
+    p1.payload.rachetKey = generateRandomKey();
+    return p1;
 }

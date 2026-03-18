@@ -30,7 +30,7 @@ class Merchant {
         Header receiveSYNAndSendACK(int seqNum);
         Header receiveSYN_ACK(int seqNum, int ackNum);
         Packet validatePacketAndgenerateChallenge(int seqNum, std::string userID);
-        Header authenticateUser(int seqNum, int ackNum, std::string decryptedChallenge);
+        Packet authenticateUser(int seqNum, std::string decryptedChallenge);
 };
 
 #endif

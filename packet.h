@@ -12,7 +12,8 @@ enum connState{
     ESTABLISHED,
     CHALLENGE_SENT,
     ID_SENT,
-    INVALID_PAYER
+    INVALID_PAYER,
+    VALIDATED
 };
 
 enum StatusCode{
