@@ -165,6 +165,8 @@ Packet Merchant::validatePacketAndgenerateChallenge(int seqNum, std::string user
     std::string challenge = std::to_string(generateSequence(10000000,99999999));
     std::string secretKey = deriveKey(this->globalMasterKey,userID);
     std::string challengeString = encrypt(secretKey,challenge);
+    std::cout << "Encrypted String: " << challengeString << std::endl;
+    std::cout << "challenge is: " << challenge << " and size is: " << challengeString.size() << std::endl;
     this->ackNum += userID.size();
     this->seqNum++;
     p1.header.seqNum = this->seqNum;
@@ -172,6 +174,35 @@ Packet Merchant::validatePacketAndgenerateChallenge(int seqNum, std::string user
     p1.header.ackNum = this->ackNum;
     p1.header.SYN = this->SYN;
     p1.header.ACK = this->ACK;
+    p1.header.statusCode = OK;
     p1.payload.stringData = challengeString;
+    this->state = CHALLENGE_SENT;
+    this->challenge = challengeString;
+    this->secretKey = secretKey;
     return p1;
+}
+
+Header Merchant::authenticateUser(int seqNum, int ackNum, std::string decryptedChallenge){
+    Header h1{};
+    if (this->state != CHALLENGE_SENT){
+        h1.statusCode = INVALID_STATE;
+        return h1;
+    }
+    if (this->ackNum != seqNum){
+        h1.statusCode = INVALID_PACKET;
+        return h1;   
+    }
+    std::string challengeStringDecrypted = decrypt(this->secretKey,this->challenge); 
+    if (decryptedChallenge != challengeStringDecrypted){
+        h1.statusCode = INVALID_USER;
+        this->state = INVALID_PAYER;
+        return h1;
+    }
+    this -> seqNum++;
+    h1.senderID = this->merchantID;
+    h1.seqNum = this->seqNum;
+    h1.ackNum = this->ackNum;
+    h1.SYN = this->SYN;
+    h1.ACK = this->ACK;
+    h1.statusCode = OK;
 }

@@ -8,6 +8,8 @@ class Merchant {
     private:
         connState state;
         std::string globalMasterKey;
+        std::string challenge;
+        std::string secretKey;
         int merchantID;
         int seqNum;
         int ackNum;
@@ -28,6 +30,7 @@ class Merchant {
         Header receiveSYNAndSendACK(int seqNum);
         Header receiveSYN_ACK(int seqNum, int ackNum);
         Packet validatePacketAndgenerateChallenge(int seqNum, std::string userID);
+        Header authenticateUser(int seqNum, int ackNum, std::string decryptedChallenge);
 };
 
 #endif

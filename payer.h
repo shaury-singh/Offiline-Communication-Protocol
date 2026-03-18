@@ -29,6 +29,7 @@ class Payer {
         Header receiveSYNAndSendACK(int seqNum);
         Header receiveSYN_ACK(int seqNum, int ackNum);
         Packet sendIDasPayload();
+        Packet receiveChallengeandSendDecryptedSecret(int seqNum, std::string challenge);
 };
 
 #endif
