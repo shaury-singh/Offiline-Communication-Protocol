@@ -6,6 +6,18 @@ The protocol simulates how real-world transport protocols establish connections,
 
 ---
 
+# How To Run The Project:
+
+### NOTE: This project depends on OpenSSL libraries.
+
+Clone the repo using the git command:
+`git clone https://github.com/shaury-singh/Offiline-Communication-Protocol.git`
+
+In the terminal, run the command:
+`g++ encryption.cpp fsk.cpp generatingFunctions.cpp keyDerivation.cpp merchant.cpp payer.cpp merchant.cpp sessionKey.cpp -o p2pProtocol.exe -lssl -lcrypto`
+
+--- 
+
 # Project Motivation
 
 Most modern communication protocols rely on internet connectivity or centralized infrastructure.
@@ -137,7 +149,7 @@ These components will be used to derive **session keys after the handshake proce
 
 The final version of the protocol will replace simulated packet exchange with **real-world signal transmission**.
 
-Communication will occur through **audio frequencies using the Android AudioTrack API**.
+Communication will occur through **audio frequencies in real time**.
 
 ### Transmission Pipeline
 
@@ -146,11 +158,10 @@ Protocol Packet
       ↓
 Signal Encoding
       ↓
-AudioTrack API
-      ↓
 Sound Transmission
       ↓
 Nearby Device Reception
+
 ```
 
 This enables **device-to-device communication without internet connectivity**.
@@ -167,18 +178,16 @@ This enables **device-to-device communication without internet connectivity**.
 * Initial protocol controller
 * AES-128 encryption module
 * HMAC-SHA256 key derivation
-
-### In Progress
-
+* Message transmission after handshake
+* Packet encoding into audio signals
 * Complete protocol state machine
 * Packet validation
 * Secure session establishment
 
-### Planned
+### In Progress
 
-* Message transmission after handshake
-* Packet encoding into audio signals
-* Android AudioTrack based communication layer
+* Key Ratcheting For Forward Secrecy
+* Audio Packet Demodulation into serialized bits
 * Real device-to-device communication
 
 ---
@@ -190,18 +199,5 @@ This enables **device-to-device communication without internet connectivity**.
 * Cryptographic primitives
 * Networking concepts
 * Android AudioTrack API (planned)
-
----
-
-# Learning Outcomes
-
-This project explores several low-level system concepts:
-
-* Transport protocol design
-* State machine implementation
-* Secure session establishment
-* Cryptographic key derivation
-* Offline communication systems
-* Signal-based data transmission
 
 ---
