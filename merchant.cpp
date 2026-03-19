@@ -200,7 +200,7 @@ Packet Merchant::authenticateUser(int seqNum, std::string decryptedChallenge){
         this->state = INVALID_PAYER;
         return p1;
     }
-    this -> seqNum++;
+    this->ackNum += decryptedChallenge.size();
     p1.header.senderID = this->merchantID;
     p1.header.seqNum = this->seqNum;
     p1.header.ackNum = this->ackNum;
@@ -209,6 +209,7 @@ Packet Merchant::authenticateUser(int seqNum, std::string decryptedChallenge){
     p1.header.statusCode = OK;
     this->state = VALIDATED;
     p1.payload.stringData = encrypt(this->secretKey,std::to_string(generateSequence(1000000,999999)));
-    p1.payload.rachetKey = generateRandomKey();
+    p1.payload.rachetKey = encrypt(this->secretKey,generateRandomKey());
+    this->seqNum = this->seqNum + p1.payload.stringData.size() + p1.payload.rachetKey.size();
     return p1;
 }

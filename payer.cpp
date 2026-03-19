@@ -188,6 +188,7 @@ Packet Payer::receiveChallengeandSendDecryptedSecret(int seqNum, std::string cha
     this->ackNum += challenge.size();
     string decryptChallenge = decrypt(this->secretKey,challenge);
     p1.header.seqNum = this->seqNum;
+    this->seqNum += decryptChallenge.size();
     p1.header.ackNum = this->ackNum;
     p1.header.SYN = this->SYN;
     p1.header.ACK = this->ACK;
